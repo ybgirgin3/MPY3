@@ -5,15 +5,14 @@ from random import choice
 import colorama
 from colorama import Fore, Back, Style
 # import mutagen.mp3
-import argparse # -> for cli 
-import mimetypes # -> for controlling target file is media (audio) or not
+import argparse
+import mimetypes
 from pydub import AudioSegment
 from pydub.playback import play
 from pprint import pprint
 
 class Music:
     def __init__(self, music_dir, music_):
-        # directory which includes musics
         self.music_dir = music_dir
         self.musics = []
         self.music_ = music_
@@ -23,10 +22,12 @@ class Music:
 
     def music_finder(self, file_):
         # find music on file
+        if file_ is None:
+            print(Fore.RED+ 'You need to give "--dir" argument at least')
+            sys.exit(0)
         self.music_dir = os.listdir(file_)
 
         for music in self.music_dir:
-            # initialize mimetype
             # get mimetype of the files in the folder
             # we need it for grapping audio and video files from folder
             self.mimestart = mimetypes.guess_type(music)[0]
@@ -38,7 +39,7 @@ class Music:
                     self.musics.append(music)
 
         if len(self.musics) == 0:
-            print('no music found :(')
+            print(Fore.YELLOW + 'no music found :(')
 
         else:
             pprint(self.musics)
@@ -59,7 +60,13 @@ class Music:
             # we're going to make 
             self.music_ = os.path.join(path_, sngnm)
             tarS_ext = self.music_.split(os.extsep)
+            # playable song
             s = AudioSegment.from_file(self.music_, tarS_ext[-1])
+            # queue
+            # s çaldıktan sonra bunun çalmak için sıraya girmesi lazım
+            q = AudioSegment.from_file(self.music_, tarS_ext[-1])
+
+
 
         else:
             self.music_ = os.path.join(path_, music2play_)
