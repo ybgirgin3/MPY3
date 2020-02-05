@@ -40,3 +40,4 @@ when you run script it's looks like this:
 
 
 **MPY3 made in python3 and it's highly recommended for avoiding errors**
+**Currently works on linux**
