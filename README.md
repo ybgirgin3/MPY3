@@ -10,12 +10,12 @@ MPY3 is CLI music player which made for fun
 
 you need to install dependencies first:
 
-``sh
+```bash
 pip3 install -r requirements.txt
-``
+```
 
 
-```py
+```python
 python3 MPY3.py --dir /path/to/music/ --s fav_song.mp3
 ```
 
@@ -33,9 +33,9 @@ Colorfully prints name of playing song on terminal with **coloroma**
 
 * Default color is GREEN and can be change via editing this line:
 
-* ``py
+* ```py
 print(Fore.GREEN + text + Style.RESET_ALL)
-``
+```
 
 when you run script it's looks like this:
 
