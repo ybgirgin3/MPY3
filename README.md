@@ -22,14 +22,11 @@ python3 MPY3.py --dir /path/to/music/ --s fav_song.mp3
 ..and it's works..
 
 
-## What can it do?
+## What happens when it working?
 
-Finds media files in target folder using **mimetypes**
-
-Uses **pydub** to play audio files even video formatted ones..
-
-
-Colorfully prints name of playing song on terminal with **coloroma**
+* Finds media files in target folder using **mimetypes**
+* Uses **pydub** to play audio files even video formatted ones..
+* Colorfully prints name of playing song on terminal with **coloroma**
 
 Default color is GREEN and can be change via editing this line:
 
