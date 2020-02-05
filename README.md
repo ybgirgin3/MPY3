@@ -31,9 +31,9 @@ Uses **pydub** to play audio files even video formatted ones..
 
 Colorfully prints name of playing song on terminal with **coloroma**
 
-* Default color is GREEN and can be change via editing this line:
+Default color is GREEN and can be change via editing this line:
 
-* ```py
+```py
 print(Fore.GREEN + text + Style.RESET_ALL)
 ```
 
