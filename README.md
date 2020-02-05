@@ -16,7 +16,7 @@ pip3 install -r requirements.txt
 
 
 ```python
-python3 MPY3.py --dir /path/to/music/ --s fav_song.mp3
+~$ python3 MPY3.py --dir /path/to/music/ --s fav_song.mp3
 ```
 
 ..and it's works..
