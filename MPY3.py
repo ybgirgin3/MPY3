@@ -1,24 +1,29 @@
+## need add queue options on it
 import os
 import sys
 # import pygame
 from random import choice
 import colorama
 from colorama import Fore, Back, Style
-# import mutagen.mp3
-import argparse
-import mimetypes
+from mutagen.mp3 import MP3
+import argparse # -> for cli 
+import mimetypes # -> for controlling target file is media (audio) or not
 from pydub import AudioSegment
 from pydub.playback import play
+from pydub.utils import mediainfo
 from pprint import pprint
 
 class Music:
     def __init__(self, music_dir, music_):
+        # directory which includes musics
         self.music_dir = music_dir
         self.musics = []
         self.music_ = music_
-        self.queue_ = ''
+        # can't do fucking queue
+        # self.queue_ = ''
         self.mimestart = ''
         self.note_ = ['🎵','🎶','🎷','🎧','🎻', '🎺', '📻', '🎼', '']
+
 
     def music_finder(self, file_):
         # find music on file
@@ -42,6 +47,8 @@ class Music:
             print(Fore.YELLOW + 'no music found :(')
 
         else:
+            print(Fore.GREEN+ '*'*100)
+            print(Style.RESET_ALL)
             pprint(self.musics)
         # return names of song in target dir as a list
         return self.musics
@@ -57,35 +64,45 @@ class Music:
             # sngnm is one the song which python chose from target folder
             sngnm = choice(msc)
             
-            # we're going to make 
+            # we're going to make join songs path and song's name
             self.music_ = os.path.join(path_, sngnm)
+
             tarS_ext = self.music_.split(os.extsep)
             # playable song
             s = AudioSegment.from_file(self.music_, tarS_ext[-1])
-            # queue
-            # s çaldıktan sonra bunun çalmak için sıraya girmesi lazım
-            q = AudioSegment.from_file(self.music_, tarS_ext[-1])
-
-
 
         else:
+            # the song script need to play specified song
             self.music_ = os.path.join(path_, music2play_)
+
+            msc = self.music_finder(path_)
+
+            # sngnm is music name which is not 'all'
             sngnm = music2play_
+
             # print(self.musics) # ->  returns empty list
 
             # pydub needs file extension in it as a argument so get that for it
-            tarS_ext = self.music_.split(os.extsep) # -> I used this style because 'os.path.splitext' returns file extension with dot in front of it pydub wants it without dot
+            # tarS_ext aka target song extension
+            tarS_ext = self.music_.split(os.extsep) # -> I used this style because 
+            # 'os.path.splitext' returns file extension with dot in front of it pydub wants it without dot
 
             # extension is always last item of list
             s = AudioSegment.from_file(self.music_, tarS_ext[-1])
 
+
         # play song in the end
         print('\n\n\n')
-        text = '......{0}...... Playing Song: {1}...........{0}.......'.format(choice(self.note_), sngnm)
+        text = '......{0}...... Playing Song: {1} ...........{0}.......'.format(choice(self.note_), sngnm)
         print(Fore.GREEN + text + Style.RESET_ALL)
         print('\n\n\n')
         try:
+            # seçilen şarkıyı çal
             play(s)
+            # for auto-shuffle run musicplayer function again with 'all' argument
+            self.music_player(path_, music2play_ = 'all')
+
+
         except KeyboardInterrupt as e:
             print(Fore.RED + '\napp closed by user..')
             sys.exit(0)
