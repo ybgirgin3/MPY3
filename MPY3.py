@@ -1,17 +1,21 @@
-## need add queue options on it
+# !/usr/bin/env python3
+# -*- coding: utf8 -*-
+# author: Yusuf Berkay Girgin
+# date: 8 Feb 2020
 import os
 import sys
-# import pygame
-from random import choice
+import vlc
+import pafy
+import argparse
 import colorama
-from colorama import Fore, Back, Style
+import mimetypes
+from random import choice
+from pprint import pprint
 from mutagen.mp3 import MP3
-import argparse # -> for cli 
-import mimetypes # -> for controlling target file is media (audio) or not
 from pydub import AudioSegment
 from pydub.playback import play
+from colorama import Fore, Style
 from pydub.utils import mediainfo
-from pprint import pprint
 
 class Music:
     def __init__(self, music_dir, music_):
@@ -19,8 +23,6 @@ class Music:
         self.music_dir = music_dir
         self.musics = []
         self.music_ = music_
-        # can't do fucking queue
-        # self.queue_ = ''
         self.mimestart = ''
         self.note_ = ['🎵','🎶','🎷','🎧','🎻', '🎺', '📻', '🎼', '']
 
@@ -53,8 +55,10 @@ class Music:
         # return names of song in target dir as a list
         return self.musics
 
+    
 
     def music_player(self, path_, music2play_):
+
         # if --song_name gets 'all' argument
         if music2play_ == 'all':
             # music_finder function will return song names as a list
@@ -98,6 +102,10 @@ class Music:
         print('\n\n\n')
         try:
             # seçilen şarkıyı çal
+
+            # aynı anda ikisini birden yapmıyor
+            # from progbar import progbar
+            # progbar(int(float(mediainfo(self.music_)['duration'])))
             play(s)
             # for auto-shuffle run musicplayer function again with 'all' argument
             self.music_player(path_, music2play_ = 'all')
@@ -108,9 +116,24 @@ class Music:
             sys.exit(0)
     
 
+    def fromYT(self, url):
+        from pafVideo import pafier
+        pafier(url, choice(self.note_))
+
+        
+
+
+
     def main(self):
         # configure dir
         if args['song_name'] is None:
+
+            if args['directory'] is None:
+                if args['youtube'] is not None:
+                    # to pafy func
+                    self.fromYT(args['youtube'])
+
+
             if args['directory'] == 'pwd':
                 args['directory'] = os.getcwd()
 
@@ -120,10 +143,12 @@ class Music:
         elif args['song_name'] is not None:
             self.music_player(args['directory'], args['song_name'])
 
+
 # for argparsing
 parser = argparse.ArgumentParser()
 parser.add_argument('-dir', '--directory', help='Director path which full of tasty music, for current dir use "pwd" command')
 parser.add_argument('-s', '--song_name', help='tasty song to listen -> for playing random song from dir use "all"')
+parser.add_argument('-y', '--youtube', help='listen song from youtube instead of local one')
 args = vars(parser.parse_args())
 
 
