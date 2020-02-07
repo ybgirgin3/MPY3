@@ -39,6 +39,22 @@ when you run script it's looks like this:
 <img src='screenshots/screen.png'/>
 
 
+## NEW UPDATE V2
+
+MPY3 now supports youtube streaming;
+
+Now you can streams videos from youtube without download them
+
+```sh
+~$ python3 MPY3.py --y "<youtube-url-here"
+
+```
+and it's run..
+
+
+
+
+
 **MPY3 made in python3 and it's highly recommended for avoiding errors**
 
 **Currently works on linux**
