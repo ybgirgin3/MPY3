@@ -116,24 +116,75 @@ class Music:
             sys.exit(0)
     
 
-    def fromYT(self, url):
+    def singlefromYT(self, url):
         from pafVideo import pafier
         pafier(url, choice(self.note_))
 
         
+    def playlistFromYT(self, url):
+        import playlist_
+        playlist_.url_getter(url)
 
 
 
+
+    def main(self):
+        # dir var mı yok mu
+
+        # dir varken
+        # dir varken zaten direk olarak local müziklerden çalmaya çalışılıyor demek 
+        # o yüzden youtube işine girmeye gerek yok burda
+        if args['directory'] is not None:
+            # eğer song varsa
+            if args['song_name'] is not None:
+                self.music_player(args['directory'], args['song_name'])
+
+            # eğer song yoksa
+            elif args['song_name'] is None:
+                # direk olarak dir adı ile muzik ara
+                # ararken eğer dir adı 'pwd' ise 
+                if args['directory'] == 'pwd':
+                    args['directory'] = os.getcwd()
+                # daha sonra bunu direk olarak music_finder'in içinde yolla
+                self.music_finder(args['directory'])
+
+        # eper dir yoksa
+        elif args['directory'] is None:
+            # song name yoksa
+            if args['song_name'] is None:
+                # youtube için kontrol et
+
+                # eğer youtube varsa
+                if args['youtube'] is not None:
+                    # NOTE:
+                    # iki tane parsing değerini
+                    # argümen eklemeden kullanamıyoruz
+                    # o yüzden ya youtube için saçma bir varsayılan argüman değeri tanımlayacağız ya da 
+                    # youtube yokken playlist argümanını alacağız
+                    if args['playlist'] is None:
+                        self.singlefromYT(args['youtube'])
+
+                elif args['youtube'] is None:
+                    if args['playlist'] is not None:
+                        self.playlistFromYT(args['playlist'])
+
+
+
+    """
     def main(self):
         # configure dir
         if args['song_name'] is None:
 
             if args['directory'] is None:
-                if args['youtube'] is not None:
+                if args['youtube'] is None:
+                    if args['playlist'] is not None:
+                        self.playlistFromYT(args['playlist'])
+
+
+                elif args['youtube'] is not None:
                     # to pafy func
                     self.fromYT(args['youtube'])
-
-
+               
             if args['directory'] == 'pwd':
                 args['directory'] = os.getcwd()
 
@@ -142,6 +193,7 @@ class Music:
 
         elif args['song_name'] is not None:
             self.music_player(args['directory'], args['song_name'])
+        """
 
 
 # for argparsing
@@ -149,6 +201,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-dir', '--directory', help='Director path which full of tasty music, for current dir use "pwd" command')
 parser.add_argument('-s', '--song_name', help='tasty song to listen -> for playing random song from dir use "all"')
 parser.add_argument('-y', '--youtube', help='listen song from youtube instead of local one')
+parser.add_argument('-p', '--playlist', help='process on a playlist from youtube.. sadly it only supports shuffle mode and requires tp re-run every single time to get different song for now.. :(')
 args = vars(parser.parse_args())
 
 
