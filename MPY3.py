@@ -30,7 +30,7 @@ class Music:
     def music_finder(self, file_):
         # find music on file
         if file_ is None:
-            print(Fore.RED+ 'You need to give "--dir" argument at least')
+            print(Fore.RED+ 'No file name found!!')
             sys.exit(0)
         self.music_dir = os.listdir(file_)
 
@@ -55,7 +55,6 @@ class Music:
         # return names of song in target dir as a list
         return self.musics
 
-    
 
     def music_player(self, path_, music2play_):
 
@@ -116,46 +115,64 @@ class Music:
             sys.exit(0)
     
 
+    # get single audio from YT
     def singlefromYT(self, url):
         from pafVideo import pafier
         pafier(url, choice(self.note_))
 
         
+    # get playlist from YT
     def playlistFromYT(self, url):
         import playlist_
         playlist_.url_getter(url)
 
 
-
-
+    # main
     def main(self):
         # dir var mı yok mu
 
         # dir varken
         # dir varken zaten direk olarak local müziklerden çalmaya çalışılıyor demek 
         # o yüzden youtube işine girmeye gerek yok burda
-        
+
+        # eğer hiçbir argüman verilmediyse direk olara uyarı çıkması daha iyi olur
         if args['directory'] is not None:
-            # eğer song varsa
+            # if there is song name
             if args['song_name'] is not None:
                 self.music_player(args['directory'], args['song_name'])
 
-            # eğer song yoksa
+            # if there is no song name
             elif args['song_name'] is None:
-                # direk olarak dir adı ile muzik ara
-                # ararken eğer dir adı 'pwd' ise 
+
+                # look for song name directly directory name
+                # if directory name is 'pwd'
                 if args['directory'] == 'pwd':
                     args['directory'] = os.getcwd()
-                # daha sonra bunu direk olarak music_finder'in içinde yolla
+
+                # after all send this directly through the music_finder function
                 self.music_finder(args['directory'])
 
         # eper dir yoksa
         elif args['directory'] is None:
-            # song name yoksa
+            # dir yoksa song_name olmasının bir anlamı yok
             if args['song_name'] is None:
                 # youtube için kontrol et
+                if args['youtube'] is None:
+                    # eğer youtube yoksa
+                    print(Fore.RED+ 'You need to give --dir argument at least' + Fore.RESET)
+                elif args['youtube'] is not None:
+                    # playlist'i kontrol et
+                    if args['playlist'] is None:
+                        # eğer playlist yoksa direk olarak youtube üzerinde işlem yap
+                        self.singlefromYT(args['youtube'])
+                    elif args['playlist'] is not None:
+                        # eğer playlist boş değilse playlist üzerinden işlem yap
+                        self.playlistFromYT(args['playlist'])
 
+
+                """
                 # eğer youtube varsa
+                # if youtube exists
                 if args['youtube'] is not None:
                     # NOTE:
                     # iki tane parsing değerini
@@ -170,7 +187,7 @@ class Music:
                         self.playlistFromYT(args['playlist'])
 
 
-
+                """
     """
     def main(self):
         # configure dir
@@ -204,7 +221,6 @@ parser.add_argument('-s', '--song_name', help='tasty song to listen -> for playi
 parser.add_argument('-y', '--youtube', help='listen song from youtube instead of local one')
 parser.add_argument('-p', '--playlist', help='process on a playlist from youtube.. sadly it only supports shuffle mode and requires tp re-run every single time to get different song for now.. :(')
 args = vars(parser.parse_args())
-
 
 # need initializations
 mimetypes.init()
