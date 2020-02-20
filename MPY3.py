@@ -134,9 +134,6 @@ class Music:
         # dir varken
         # dir varken zaten direk olarak local müziklerden çalmaya çalışılıyor demek 
         # o yüzden youtube işine girmeye gerek yok burda
-        if args['directory'] is None:
-            print(Fore.RED + 'You need to give --dir argument at least' + Fore.RESET)
-        
         
         if args['directory'] is not None:
             # eğer song varsa
