@@ -24,14 +24,11 @@ class Music:
         self.musics = []
         self.music_ = music_
         self.mimestart = ''
-        self.note_ = ['🎵','🎶','🎷','🎧','🎻', '🎺', '📻', '🎼', '']
+        self.note_ = ['🎵','🎶','🎷','🎧','🎻', '🎺', '📻', '🎼']
 
 
     def music_finder(self, file_):
         # find music on file
-        if file_ is None:
-            print(Fore.RED+ 'No file name found!!')
-            sys.exit(0)
         self.music_dir = os.listdir(file_)
 
         for music in self.music_dir:
@@ -49,14 +46,14 @@ class Music:
             print(Fore.YELLOW + 'no music found :(')
 
         else:
-            print(Fore.GREEN+ '*'*100)
+            print(Fore.GREEN + '*'*100)
             print(Style.RESET_ALL)
             pprint(self.musics)
         # return names of song in target dir as a list
         return self.musics
 
 
-    def music_player(self, path_, music2play_):
+    def music_player(self, path_, music2play_, loop=None):
 
         # if --song_name gets 'all' argument
         if music2play_ == 'all':
@@ -103,9 +100,14 @@ class Music:
             # seçilen şarkıyı çal
 
             # aynı anda ikisini birden yapmıyor
+            # NOTE: no need to progress bar while playing local songs because pydub already have built-in progressbar
             # from progbar import progbar
             # progbar(int(float(mediainfo(self.music_)['duration'])))
-            play(s)
+            if loop is None:
+                play(s)
+            else:
+                print('song will play {} times'.format(loop))
+                play(s*loop)
             # for auto-shuffle run musicplayer function again with 'all' argument
             self.music_player(path_, music2play_ = 'all')
 
@@ -129,17 +131,24 @@ class Music:
 
     # main
     def main(self):
-        # dir var mı yok mu
+        # if '--dir' arg is not None
+        # it means user want to play music from local machine
+        # so no need to --youtube or --playlist
 
-        # dir varken
-        # dir varken zaten direk olarak local müziklerden çalmaya çalışılıyor demek 
-        # o yüzden youtube işine girmeye gerek yok burda
-
-        # eğer hiçbir argüman verilmediyse direk olara uyarı çıkması daha iyi olur
+        # if all of the args are none so raise error
         if args['directory'] is not None:
             # if there is song name
+
             if args['song_name'] is not None:
-                self.music_player(args['directory'], args['song_name'])
+                if args['loop'] is not None:
+                    # if --loop args is not None
+                    print('Selected song will play 3 times')
+                    
+                    self.music_player(args['directory'], args['song_name'], args['loop'])
+                elif args['loop'] is None:
+                    # if --loop args is None
+                    self.music_player(args['directory'], args['song_name'])
+
 
             # if there is no song name
             elif args['song_name'] is None:
@@ -152,74 +161,48 @@ class Music:
                 # after all send this directly through the music_finder function
                 self.music_finder(args['directory'])
 
-        # eper dir yoksa
+
+
+        # if 'dir' arg is none
         elif args['directory'] is None:
-            # dir yoksa song_name olmasının bir anlamı yok
+            # if 'song_name' arg is none
+
             if args['song_name'] is None:
-                # youtube için kontrol et
+                # if both dir and song name is none look for youtube arg
+
                 if args['youtube'] is None:
-                    # eğer youtube yoksa
-                    print(Fore.RED+ 'You need to give --dir argument at least' + Fore.RESET)
+                    # if youtube arg is none this means
+                    # main all of main args are empty and raise a simple error and exit app
+                    print(Fore.RED + 'You need to give --dir argument at least' + Fore.RESET)
+
+                # if youtube is not none
                 elif args['youtube'] is not None:
-                    # playlist'i kontrol et
-                    if args['playlist'] is None:
-                        # eğer playlist yoksa direk olarak youtube üzerinde işlem yap
-                        self.singlefromYT(args['youtube'])
-                    elif args['playlist'] is not None:
-                        # eğer playlist boş değilse playlist üzerinden işlem yap
-                        self.playlistFromYT(args['playlist'])
+                    # look for playlist if it's none
 
-
-                """
-                # eğer youtube varsa
-                # if youtube exists
-                if args['youtube'] is not None:
-                    # NOTE:
-                    # iki tane parsing değerini
-                    # argümen eklemeden kullanamıyoruz
-                    # o yüzden ya youtube için saçma bir varsayılan argüman değeri tanımlayacağız ya da 
-                    # youtube yokken playlist argümanını alacağız
                     if args['playlist'] is None:
+                        # directly send value to the youtube single url function
+
                         self.singlefromYT(args['youtube'])
 
-                elif args['youtube'] is None:
-                    if args['playlist'] is not None:
+                    # users must be a simple 'p' arguments to --youtube
+                    # if they want to listen songs from a --playlist
+                    # because --playlist arg is depended to --youtube
+                    # so it's not working with empty front argument
+                    # until I fix it
+                    elif args['youtube'] == 'p' and args['playlist'] is not None:
+                        # if --playlist is not empty send this to the playlistFromTY func
+
                         self.playlistFromYT(args['playlist'])
-
-
-                """
-    """
-    def main(self):
-        # configure dir
-        if args['song_name'] is None:
-
-            if args['directory'] is None:
-                if args['youtube'] is None:
-                    if args['playlist'] is not None:
-                        self.playlistFromYT(args['playlist'])
-
-
-                elif args['youtube'] is not None:
-                    # to pafy func
-                    self.fromYT(args['youtube'])
-               
-            if args['directory'] == 'pwd':
-                args['directory'] = os.getcwd()
-
-            self.music_finder(args['directory'])
-            # print(type(self.music_finder(args['directory']))) # -> return list
-
-        elif args['song_name'] is not None:
-            self.music_player(args['directory'], args['song_name'])
-        """
 
 
 # for argparsing
 parser = argparse.ArgumentParser()
 parser.add_argument('-dir', '--directory', help='Director path which full of tasty music, for current dir use "pwd" command')
 parser.add_argument('-s', '--song_name', help='tasty song to listen -> for playing random song from dir use "all"')
+parser.add_argument('-l', '--loop', type=int, help="give how many times you want to listen the your fav song as integer")
 parser.add_argument('-y', '--youtube', help='listen song from youtube instead of local one')
 parser.add_argument('-p', '--playlist', help='process on a playlist from youtube.. sadly it only supports shuffle mode and requires tp re-run every single time to get different song for now.. :(')
+
 args = vars(parser.parse_args())
 
 # need initializations
